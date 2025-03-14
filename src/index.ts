@@ -11,16 +11,35 @@ async function main() {
       headless: process.env.HEADLESS === 'true',
     });
 
-    const page = await browser.newPage();
-    const crawler = new IowaDnrCrawler(page, new Logger(console));
+    const context = await browser.newContext();
+    const crawler = new IowaDnrCrawler(context, new Logger(console));
     await crawler.setup();
 
-    while (await crawler.hasMorePages()) {
-      const orders = await crawler.scrapePage();
-      await crawler.goToNextPage();
-      await database.insert(EnforcementOrderEntity).values(orders);
+    const spawns = [];
+
+    const MAX_SPAWN_CHUNK_SIZE = process.env.MAX_SPAWN_CHUNK_SIZE ? +process.env.MAX_SPAWN_CHUNK_SIZE : 5;
+    const MAX_PAGE_LOOKUP = process.env.MAX_PAGE_LOOKUP ? +process.env.MAX_PAGE_LOOKUP : 66;
+
+    while (crawler.pageNum <= MAX_PAGE_LOOKUP) {
+      const pageNum = crawler.pageNum;
+      spawns.push(crawler.spawn(pageNum));
+
+      if (spawns.length === MAX_SPAWN_CHUNK_SIZE) {
+        const entities = await Promise.all(spawns);
+        await database.insert(EnforcementOrderEntity).values(entities.flat());
+        spawns.length = 0;
+      }
+
+      crawler.goToNextPage();
     }
 
+    if (spawns.length > 0) {
+      const entities = await Promise.all(spawns);
+      await database.insert(EnforcementOrderEntity).values(entities.flat());
+    }
+
+    await crawler.wait(5000);
+    await crawler.teardown();
     await browser.close();
     return 0;
   } catch (error) {

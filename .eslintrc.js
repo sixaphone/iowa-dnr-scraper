@@ -10,5 +10,5 @@ module.exports = {
   env: {
     node: true,
   },
-  ignorePatterns: ['.eslintrc.js', 'node_modules/*', 'dist/*'],
+  ignorePatterns: ['.eslintrc.js', 'node_modules/*', 'dist/*', '*.db', '*.trainedata'],
 };

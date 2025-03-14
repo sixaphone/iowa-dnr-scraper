@@ -4,6 +4,7 @@
 
 .env
 *.db
+*.traineddata
 
 /node_modules
 npm-debug.log*

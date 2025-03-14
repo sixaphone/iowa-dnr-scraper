@@ -13,7 +13,8 @@
     "@libsql/client": "^0.14.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
-    "playwright": "1.51.0"
+    "playwright": "1.51.0",
+    "tesseract.js": "^6.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.26.1",
