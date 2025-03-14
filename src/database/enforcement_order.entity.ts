@@ -9,3 +9,5 @@ export const EnforcementOrderEntity = sqliteTable('enforcement_orders', {
   violationType: text().notNull(),
   dataSourceLink: text().notNull(),
 });
+
+export type EnforcementOrder = typeof EnforcementOrderEntity.$inferInsert;
