@@ -7,7 +7,7 @@
     "scrape": "yarn build && node dist/index.js",
     "test": "ts-node ./src/index.ts",
     "build": "tsc",
-    "postinstall": "npx playwright install"
+    "postinstall": "npx playwright install && npx drizzle-kit push"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
